@@ -20,8 +20,7 @@ class CreateJwt
             'scopes' => [$username],
             'iss' => 'http://api.mysite.com',
         ];
-        $data = rtrim(strtr(base64_encode(json_encode($header)), '+/', '-_'), '=');
-        $token = $jwt->encode((array)$data); //. "." . base64_encode(json_encode($payload)));
+        $token = $jwt->encode($payload, $header);
         return ($token);
     }
 
