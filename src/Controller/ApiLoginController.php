@@ -19,8 +19,8 @@ class ApiLoginController extends AbstractController
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        return $this->json([
+/*        return $this->json([
             'user' => $this->getUser() ? $user->getUserIdentifier() : null,
-        ]);
+        ]);*/
     }
 }

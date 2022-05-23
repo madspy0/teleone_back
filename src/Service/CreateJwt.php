@@ -14,11 +14,27 @@ class CreateJwt
             "typ" => "JWT",
             "alg" => "HS256"
         ];
+//        $payload = [
+//            'uid' => 1,
+//            'aud' => 'http://site.com',
+//            'scopes' => [$username],
+//            'iss' => 'http://api.mysite.com',
+//        ];
         $payload = [
-            'uid' => 1,
-            'aud' => 'http://site.com',
-            'scopes' => [$username],
-            'iss' => 'http://api.mysite.com',
+            "mercure" => [
+                "publish" => [
+                    "*"
+                ],
+                "subscribe" => [
+                    "https://demo/" . $username,
+                    "{scheme}://{+host}/demo/books/{id}.jsonld",
+                    "/.well-known/mercure/subscriptions{/topic}{/subscriber}"
+                ],
+                "payload" => [
+                    "user" => "https://example.com/users/" . $username,
+                    "remoteAddr" => "127.0.0.1"
+                ]
+            ]
         ];
         $token = $jwt->encode($payload, $header);
         return ($token);
