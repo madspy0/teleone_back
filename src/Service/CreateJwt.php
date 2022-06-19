@@ -9,7 +9,7 @@ class CreateJwt
 {
     public function newToken($username): string
     {
-        $jwt = new JWT('secret', 'HS256', 3600, 10);
+        $jwt = new JWT('!ChangeMe!', 'HS256', 3600, 10);
         $header = [
             "typ" => "JWT",
             "alg" => "HS256"
@@ -26,12 +26,12 @@ class CreateJwt
                     "*"
                 ],
                 "subscribe" => [
-                    "https://demo/" . $username,
+                    explode("@",$username)[0],
                     "{scheme}://{+host}/demo/books/{id}.jsonld",
                     "/.well-known/mercure/subscriptions{/topic}{/subscriber}"
                 ],
                 "payload" => [
-                    "user" => "https://example.com/users/" . $username,
+                    "user" => $username,
                     "remoteAddr" => "127.0.0.1"
                 ]
             ]
@@ -40,4 +40,9 @@ class CreateJwt
         return ($token);
     }
 
+    public function getEmail($token)
+    {
+        $payload = (new JWT('!ChangeMe!', 'HS256', 3600, 10))->decode($token);
+        return ($payload['mercure']->payload->user);
+    }
 }

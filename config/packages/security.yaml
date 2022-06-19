@@ -13,8 +13,20 @@ security:
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
+    api:
+      pattern: ^/api/
+      stateless: true
+      entry_point: App\Security\AuthenticationEntryPoint
+      json_login:
+        check_path: api_login
+        username_path: username
+        password_path: password
+        success_handler: App\Security\Authentication\AuthenticationSuccessHandler
+      custom_authenticators:
+        - App\Security\Authentication\ApiKeyAuthenticator
     main:
       lazy: true
+      # stateless: true
       provider: app_user_provider
 
       # activate different ways to authenticate
@@ -24,22 +36,16 @@ security:
       # switch_user: true
 
       form_login:
-        # "login" is the name of the route created previously
         login_path: app_login
         check_path: app_login
         enable_csrf: true
-      json_login:
-        # api_login is a route we will create below
-        check_path: api_login
-        username_path: username
-        password_path: password
-        success_handler: App\Security\Authentication\AuthenticationSuccessHandler
       logout:
         path: app_logout
   # Easy way to control access for large sections of your site
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
+    - { path: ^/api, roles: ROLE_USER }
     - { path: ^/admin, roles: ROLE_ADMIN }
     # - { path: ^/profile, roles: ROLE_USER }
 

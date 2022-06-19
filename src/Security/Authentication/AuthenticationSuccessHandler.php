@@ -20,6 +20,6 @@ class AuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterf
     {
         $user = $token->getUser();
 
-        return new JsonResponse(['apiToken' => $this->createJwt->newToken($user->getUserIdentifier())]);
+        return new JsonResponse(['username' => $user->getUserIdentifier(), 'token' => $this->createJwt->newToken($user->getUserIdentifier())]);
     }
 }
