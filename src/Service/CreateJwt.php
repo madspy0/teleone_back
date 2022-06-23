@@ -1,15 +1,18 @@
 <?php
 
-
 namespace App\Service;
 
 use Ahc\Jwt\JWT;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-class CreateJwt
+class CreateJwt implements LoggerAwareInterface
 {
+    private $logger;
+
     public function newToken($username): string
     {
-        $jwt = new JWT('!ChangeMe!', 'HS256', 3600, 10);
+        $jwt = new JWT('!ChangeMe!', 'HS256', 60, 10);
         $header = [
             "typ" => "JWT",
             "alg" => "HS256"
@@ -26,7 +29,7 @@ class CreateJwt
                     "*"
                 ],
                 "subscribe" => [
-                    explode("@",$username)[0],
+                    explode("@", $username)[0],
                     "{scheme}://{+host}/demo/books/{id}.jsonld",
                     "/.well-known/mercure/subscriptions{/topic}{/subscriber}"
                 ],
@@ -42,7 +45,16 @@ class CreateJwt
 
     public function getEmail($token)
     {
-        $payload = (new JWT('!ChangeMe!', 'HS256', 3600, 10))->decode($token);
-        return ($payload['mercure']->payload->user);
+        try {
+            $payload = (new JWT('!ChangeMe!', 'HS256', 60, 10))->decode($token);
+            return ($payload['mercure']->payload->user);
+        } catch (\Exception $e) {
+            $this->logger->info($e->getMessage() . ' ' . $e->getCode());
+        }
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 }
